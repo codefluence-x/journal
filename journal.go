@@ -69,7 +69,13 @@ func (j *journalLogger) Log() {
 			j.fields["caller"] = fmt.Sprintf("%s:%d", file, no)
 		}
 
-		j.fields["error"] = j.errRaw
+		switch j.errRaw.(type) {
+		case error:
+			j.fields["error"] = j.errRaw.Error()
+		default:
+			j.fields["error"] = j.errRaw
+		}
+
 	}
 
 	toBePrint, _ := json.Marshal(j.fields)
