@@ -9,8 +9,6 @@ import (
 	uuid "github.com/satori/go.uuid"
 )
 
-var trackId, _ = uuid.NewV4()
-
 type Journal interface {
 	// Sometimes log need tags to be grouped or just easier search in log architecture
 	SetTags(tags ...string) Journal
@@ -83,6 +81,8 @@ func (j *journalLogger) Log() {
 }
 
 func (j *journalLogger) appendAll() {
+	var trackId, _ = uuid.NewV4()
+
 	j.fields["track_id"] = trackId.String()
 	j.fields["message"] = j.msg
 	j.fields["level"] = j.level
