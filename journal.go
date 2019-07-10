@@ -17,6 +17,9 @@ type Journal interface {
 
 	// Print the log
 	Log()
+
+	// Get raw json string to be logged
+	Raw() string
 }
 
 type journalLogger struct {
@@ -58,7 +61,15 @@ func (j *journalLogger) AddField(field string, value interface{}) Journal {
 	return j
 }
 
+func (j *journalLogger) Raw() string {
+	return string(j.compileLog())
+}
+
 func (j *journalLogger) Log() {
+	fmt.Println(j.Raw())
+}
+
+func (j *journalLogger) compileLog() []byte {
 	j.appendAll()
 
 	if j.level == "error" {
@@ -76,8 +87,8 @@ func (j *journalLogger) Log() {
 
 	}
 
-	toBePrint, _ := json.Marshal(j.fields)
-	fmt.Printf("%s\n", toBePrint)
+	jsonEncodedString, _ := json.Marshal(j.fields)
+	return jsonEncodedString
 }
 
 func (j *journalLogger) appendAll() {
