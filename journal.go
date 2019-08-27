@@ -16,7 +16,7 @@ type Journal interface {
 	AddField(field string, value interface{}) Journal
 
 	// Set track id of a log
-	SetTrackId(trackId interface{})
+	SetTrackId(trackId interface{}) Journal
 
 	// Print the log
 	Log()
@@ -60,8 +60,9 @@ func (j *journalLogger) SetTags(tags ...string) Journal {
 	return j
 }
 
-func (j *journalLogger) SetTrackId(trackId interface{}) {
+func (j *journalLogger) SetTrackId(trackId interface{}) Journal {
 	j.trackId = trackId
+	return j
 }
 
 func (j *journalLogger) AddField(field string, value interface{}) Journal {
