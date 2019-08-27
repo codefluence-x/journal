@@ -15,6 +15,9 @@ type Journal interface {
 	// Add custom field
 	AddField(field string, value interface{}) Journal
 
+	// Set track id of a log
+	SetTrackId(trackId interface{})
+
 	// Print the log
 	Log()
 
@@ -23,11 +26,12 @@ type Journal interface {
 }
 
 type journalLogger struct {
-	msg    string
-	level  string
-	errRaw error
-	tags   []string
-	fields map[string]interface{}
+	msg     string
+	level   string
+	errRaw  error
+	tags    []string
+	trackId interface{}
+	fields  map[string]interface{}
 }
 
 func baseJournal(msg, level string) *journalLogger {
@@ -54,6 +58,10 @@ func Error(msg string, err error) Journal {
 func (j *journalLogger) SetTags(tags ...string) Journal {
 	j.tags = append(j.tags, tags...)
 	return j
+}
+
+func (j *journalLogger) SetTrackId(trackId interface{}) {
+	j.trackId = trackId
 }
 
 func (j *journalLogger) AddField(field string, value interface{}) Journal {
@@ -92,9 +100,12 @@ func (j *journalLogger) compileLog() []byte {
 }
 
 func (j *journalLogger) appendAll() {
-	var trackId, _ = uuid.NewV4()
+	if j.trackId == nil {
+		var trackId, _ = uuid.NewV4()
+		j.trackId = trackId.String()
+	}
 
-	j.fields["track_id"] = trackId.String()
+	j.fields["track_id"] = j.trackId
 	j.fields["message"] = j.msg
 	j.fields["level"] = j.level
 
