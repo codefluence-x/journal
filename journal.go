@@ -75,14 +75,14 @@ func (j *journalLogger) Raw() string {
 }
 
 func (j *journalLogger) Log() {
-	fmt.Println(j.Raw())
+	fmt.Println(string(j.compileLog()))
 }
 
 func (j *journalLogger) compileLog() []byte {
 	j.appendAll()
 
 	if j.level == "error" {
-		_, file, no, ok := runtime.Caller(1)
+		_, file, no, ok := runtime.Caller(2)
 		if ok {
 			j.fields["caller"] = fmt.Sprintf("%s:%d", file, no)
 		}
